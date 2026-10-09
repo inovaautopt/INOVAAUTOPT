@@ -6,7 +6,6 @@ import { clearList, removeFromList, useList } from "@/lib/local-lists";
 import { BODY_TYPE_LABEL, DRIVETRAIN_LABEL, FUEL_LABEL, NOT_STATED, ORIGIN_LABEL, TRANSMISSION_LABEL, VEHICLE_STATUS_LABEL, type BodyType, type Drivetrain, type Fuel, type Origin, type Transmission, type VehicleStatus } from "@/lib/domain";
 import { formatKm, formatPrice, formatRegistration } from "@/lib/format";
 import { VehicleImage } from "./VehicleImage";
-import { Plate } from "./Plate";
 
 interface Item {
   id: string;
@@ -174,7 +173,6 @@ export function CompareTable() {
                     <Link href={`/viaturas/${v.slug}`} className="block text-base font-bold text-ink hover:underline">
                       {v.make} {v.model}
                     </Link>
-                    <Plate reference={v.reference} year={v.firstRegistrationYear} month={v.firstRegistrationMonth} size="sm" />
                     <button type="button" className="block text-xs font-semibold text-danger underline" onClick={() => removeFromList("compare", v.id)}>
                       Remover
                     </button>
