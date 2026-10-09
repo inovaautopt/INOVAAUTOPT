@@ -373,3 +373,78 @@
     background-position: 0 50%;
   }
 }
+
+/*
+ * Tema escuro (escolhido no botão do cabeçalho; por omissão segue o sistema do visitante).
+ * O atributo data-theme é definido em <html> antes de a página aparecer (script em layout.tsx).
+ * "ink" continua a ser o grafite da marca (fundos escuros: rodapé, galeria, menus); só o TEXTO
+ * que usa ink passa a claro.
+ */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-paper: #0d1014;
+  --color-surface: #161a20;
+  --color-ink-soft: #c5ccd5;
+  --color-muted: #96a0ac;
+  --color-line: #29303a;
+  --color-line-strong: #3b4450;
+  --color-chrome-hi: #222830;
+  --color-brand-ink: #93b2ec;
+  --color-brand-soft: #1b2942;
+  --color-ok: #5fc78f;
+  --color-ok-soft: #13301f;
+  --color-warn: #e6b450;
+  --color-warn-soft: #33270d;
+  --color-danger: #f0857c;
+  --color-danger-soft: #3a1714;
+  --fg: #eef1f4;
+}
+:root[data-theme="dark"] body {
+  color: var(--fg);
+}
+:root[data-theme="dark"] .text-ink,
+:root[data-theme="dark"] .hover\:text-ink:hover {
+  color: var(--fg);
+}
+:root[data-theme="dark"] .border-ink,
+:root[data-theme="dark"] .hover\:border-ink:hover,
+:root[data-theme="dark"] .btn-outline:hover:not(:disabled) {
+  border-color: #c5ccd5;
+}
+:root[data-theme="dark"] .btn-outline,
+:root[data-theme="dark"] .btn-ghost,
+:root[data-theme="dark"] .input {
+  color: var(--fg);
+}
+:root[data-theme="dark"] .btn-dark {
+  background: #e8ecf0;
+  color: #0d1014;
+}
+:root[data-theme="dark"] .btn-dark:hover:not(:disabled) {
+  background: #ffffff;
+}
+:root[data-theme="dark"] .btn-primary:hover:not(:disabled) {
+  background: #2c4a85;
+}
+:root[data-theme="dark"] .tag-dark {
+  background: #e8ecf0;
+  color: #0d1014;
+}
+/* Botões claros sobre fotografias (galeria, favoritos) mantêm texto escuro */
+:root[data-theme="dark"] .bg-white\/90.text-ink,
+:root[data-theme="dark"] .bg-white\/95.text-ink {
+  color: #161a1f;
+}
+:root[data-theme="dark"] .table tbody tr:hover {
+  background: #1c2129;
+}
+:root[data-theme="dark"] .skeleton {
+  background: linear-gradient(90deg, #1c2128 25%, #252b33 37%, #1c2128 63%);
+  background-size: 400% 100%;
+}
+:root[data-theme="dark"] select.input {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5 6 6.5l5-5' stroke='%2396a0ac' stroke-width='1.6'/%3E%3C/svg%3E");
+}
+:root[data-theme="dark"] ::selection {
+  background: #2c4a85;
+}
