@@ -97,6 +97,12 @@ export function weekdayKey(date: string): "mon" | "tue" | "wed" | "thu" | "fri" 
   return keys[d.getUTCDay()]!;
 }
 
+/** "@conta" a partir do URL de um perfil (Instagram, Facebook). */
+export function socialHandle(url: string): string {
+  const m = url.match(/^https?:\/\/(?:www\.)?[^/]+\/([^/?#]+)/i);
+  return m ? `@${m[1]}` : url;
+}
+
 export function slugify(input: string): string {
   return input
     .normalize("NFD")
