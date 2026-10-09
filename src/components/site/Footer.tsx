@@ -3,6 +3,8 @@ import { Logo } from "@/components/brand/Logo";
 import { getPublicSettings } from "@/lib/settings";
 import { getBranches, summarizeHours } from "@/lib/branches";
 import { callCostNote, formatPhone } from "@/lib/phone";
+import { socialHandle } from "@/lib/format";
+import { InstagramIcon } from "@/components/brand/InstagramIcon";
 import { CookieSettingsLink } from "@/components/consent/CookieSettingsLink";
 
 export async function Footer() {
@@ -62,8 +64,9 @@ export async function Footer() {
             )}
             {company.instagramUrl && (
               <li>
-                <a className="hover:text-white" href={company.instagramUrl} rel="noopener noreferrer" target="_blank">
-                  Instagram
+                <a className="inline-flex items-center gap-2 hover:text-white" href={company.instagramUrl} rel="noopener noreferrer" target="_blank">
+                  <InstagramIcon className="h-4 w-4" />
+                  Instagram {socialHandle(company.instagramUrl)}
                 </a>
               </li>
             )}
