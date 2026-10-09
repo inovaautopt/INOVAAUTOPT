@@ -262,7 +262,6 @@ export const vehicleEditorInput = z
     }
     if (v.status === "available" || v.status === "reserved") {
       if (v.priceEuros === null) ctx.addIssue({ code: "custom", path: ["priceEuros"], message: "Para publicar, indica o preço." });
-      if (v.vatRegime === "unknown") ctx.addIssue({ code: "custom", path: ["vatRegime"], message: "Para publicar, indica o tratamento de IVA." });
       if (v.firstRegistrationYear === null) ctx.addIssue({ code: "custom", path: ["firstRegistrationYear"], message: "Para publicar, indica o ano." });
       if (v.mileageKm === null) ctx.addIssue({ code: "custom", path: ["mileageKm"], message: "Para publicar, indica os quilómetros." });
       if (v.fuel === null) ctx.addIssue({ code: "custom", path: ["fuel"], message: "Para publicar, indica o combustível." });
