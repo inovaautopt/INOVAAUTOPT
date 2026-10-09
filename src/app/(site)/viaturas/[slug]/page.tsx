@@ -24,7 +24,6 @@ import { callCostNote } from "@/lib/phone";
 import { vehicleContactMessage } from "@/lib/whatsapp-link";
 import { mediaUrl } from "@/lib/storage-url";
 import { Gallery } from "@/components/vehicle/Gallery";
-import { Plate } from "@/components/vehicle/Plate";
 import { ContactPanel, MobileContactBar } from "@/components/vehicle/ContactPanel";
 import { VehicleCard } from "@/components/vehicle/VehicleCard";
 import { CompareButton, FavoriteButton } from "@/components/vehicle/ListButtons";
@@ -316,7 +315,6 @@ function VehicleHeading({ v, reduced, sold }: { v: Awaited<ReturnType<typeof get
   return (
     <div>
       <div className="flex flex-wrap items-center gap-2">
-        <Plate reference={v.reference} year={v.firstRegistrationYear} month={v.firstRegistrationMonth} size="md" />
         {v.status === "reserved" && <span className="tag tag-warn">Reservado</span>}
         {sold && <span className="tag tag-dark">Vendido</span>}
         {v.status === "available" && <span className="tag tag-ok">Disponível</span>}
