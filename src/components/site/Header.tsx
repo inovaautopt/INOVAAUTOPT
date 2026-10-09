@@ -35,8 +35,8 @@ export async function Header() {
           </ul>
         </nav>
         <div className="ml-auto flex items-center gap-0 xs:gap-1">
-          <HeaderTools />
-          <MobileMenu nav={nav} />
+          <HeaderTools instagramUrl={company.instagramUrl} />
+          <MobileMenu nav={nav} instagramUrl={company.instagramUrl} />
         </div>
       </div>
     </header>
