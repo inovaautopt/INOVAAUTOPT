@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  qualidade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      APP_ENV: test
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/inova_dev
+      TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/inova_test
+      AUTH_PROVIDER: dev
+      DEV_AUTH_SECRET: ci-only-secret-ci-only-secret-0123456789
+      STORAGE_DRIVER: local
+      NEXT_PUBLIC_STORAGE_PUBLIC_BASE: /media/vehicle-media
+      EMAIL_PROVIDER: log
+      WHATSAPP_PROVIDER: mock
+      META_APP_SECRET: ci-app-secret
+      WHATSAPP_VERIFY_TOKEN: ci-verify
+      CRON_SECRET: ci-cron-secret-ci-cron-secret-0123456789
+      RATE_LIMIT_SALT: ci-salt-0123456789
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run db:local -- --seed-demo
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Testes de navegação
+        run: |
+          npm start &
+          npx wait-on http://localhost:3000/api/health --timeout 60000
+          E2E_BASE_URL=http://localhost:3000 npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
