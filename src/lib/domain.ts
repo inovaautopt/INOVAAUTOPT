@@ -57,7 +57,7 @@ export const ORIGIN_LABEL: Record<Origin, string> = { national: "Nacional", impo
 export const VAT_REGIMES = ["unknown", "vat_included_deductible", "margin_scheme"] as const;
 export type VatRegime = (typeof VAT_REGIMES)[number];
 export const VAT_LABEL: Record<VatRegime, string> = {
-  unknown: "Por indicar",
+  unknown: "IVA a confirmar no stand",
   vat_included_deductible: "Preço com IVA incluído (IVA dedutível para empresas)",
   margin_scheme: "Preço final com IVA incluído (regime da margem, IVA não dedutível)",
 };
