@@ -2,7 +2,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Camera, Heart, GitCompareArrows, Menu, Moon, Sun, X } from "lucide-react";
+import { Heart, GitCompareArrows, Menu, Moon, Sun, X } from "lucide-react";
+import { InstagramIcon } from "@/components/brand/InstagramIcon";
 import { socialHandle } from "@/lib/format";
 import { useList } from "@/lib/local-lists";
 
@@ -59,7 +60,7 @@ export function HeaderTools({ instagramUrl }: { instagramUrl?: string | null }) 
           className="hidden h-11 items-center gap-1.5 rounded-full px-3 text-sm font-semibold text-ink-soft hover:bg-chrome-hi hover:text-ink sm:inline-flex"
           aria-label={`Instagram ${socialHandle(instagramUrl)} (abre numa nova janela)`}
         >
-          <Camera aria-hidden className="h-5 w-5" />
+          <InstagramIcon className="h-5 w-5" />
           <span className="hidden xl:inline">{socialHandle(instagramUrl)}</span>
         </a>
       )}
@@ -124,7 +125,7 @@ export function MobileMenu({ nav, instagramUrl }: { nav: { href: string; label: 
             {instagramUrl && (
               <li className="mt-2 border-t border-line pt-2">
                 <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-[var(--radius-sm)] px-4 py-3.5 text-lg font-semibold hover:bg-chrome-hi">
-                  <Camera aria-hidden className="h-5 w-5" />
+                  <InstagramIcon className="h-5 w-5" />
                   Instagram <span className="text-base font-normal text-muted">{socialHandle(instagramUrl)}</span>
                 </a>
               </li>
