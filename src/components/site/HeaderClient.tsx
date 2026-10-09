@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Heart, GitCompareArrows, Menu, X } from "lucide-react";
+import { Heart, GitCompareArrows, Menu, Moon, Sun, X } from "lucide-react";
 import { useList } from "@/lib/local-lists";
 
 function Count({ n }: { n: number }) {
@@ -14,11 +14,43 @@ function Count({ n }: { n: number }) {
   );
 }
 
+/** Alterna entre tema claro e escuro; a escolha fica guardada neste navegador. */
+function ThemeToggle() {
+  const [dark, setDark] = useState(false);
+  useEffect(() => {
+    // Sincroniza com o tema aplicado pelo script do <head> (só existe no navegador)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDark(document.documentElement.dataset.theme === "dark");
+  }, []);
+  const toggle = () => {
+    const next = dark ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem("inova-theme", next);
+    } catch {
+      /* navegação privada: a escolha vale só para esta página */
+    }
+    setDark(!dark);
+  };
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      className="relative inline-flex h-11 w-10 items-center justify-center rounded-full hover:bg-chrome-hi xs:w-11"
+      aria-label={dark ? "Mudar para tema claro" : "Mudar para tema escuro"}
+      title={dark ? "Tema claro" : "Tema escuro"}
+    >
+      {dark ? <Sun aria-hidden className="h-5 w-5" /> : <Moon aria-hidden className="h-5 w-5" />}
+    </button>
+  );
+}
+
 export function HeaderTools() {
   const fav = useList("favorites").length;
   const cmp = useList("compare").length;
   return (
     <>
+      <ThemeToggle />
       <Link href="/favoritos" className="relative inline-flex h-11 w-10 items-center justify-center rounded-full hover:bg-chrome-hi xs:w-11" aria-label={`Favoritos (${fav})`}>
         <Heart aria-hidden className="h-5 w-5" />
         <Count n={fav} />
