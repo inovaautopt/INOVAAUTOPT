@@ -3,7 +3,6 @@ import type { VehicleCard as Card } from "@/lib/vehicles";
 import { FUEL_LABEL, TRANSMISSION_LABEL } from "@/lib/domain";
 import { formatKm, formatPrice } from "@/lib/format";
 import { VehicleImage } from "./VehicleImage";
-import { Plate } from "./Plate";
 import { FavoriteButton } from "./ListButtons";
 
 export function vehicleTitle(v: { make: string; model: string }) {
@@ -52,8 +51,7 @@ export function VehicleCard({ v, priority = false }: { v: Card; priority?: boole
             </li>
           ))}
         </ul>
-        <div className="mt-auto flex items-end justify-between gap-3 pt-1">
-          <Plate reference={v.reference} year={v.firstRegistrationYear} month={v.firstRegistrationMonth} size="sm" />
+        <div className="mt-auto flex items-end justify-end gap-3 pt-1">
           <p className="text-right">
             {reduced && <span className="block text-xs text-muted line-through num">{formatPrice(v.previousPriceCents)}</span>}
             <span className="heading text-xl num">{formatPrice(v.priceCents)}</span>
