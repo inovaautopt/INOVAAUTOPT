@@ -37,10 +37,10 @@ export default async function EditVehicle(props: PageProps<"/admin/viaturas/[id]
   });
   if (!data) notFound();
   const { v } = data;
-  const publishable = v.priceCents && v.vatRegime !== "unknown" && v.firstRegistrationYear && v.mileageKm !== null && v.fuel && v.transmission;
+  const publishable = v.priceCents && v.firstRegistrationYear && v.mileageKm !== null && v.fuel && v.transmission;
   const missing = [
     !v.priceCents && "preço",
-    v.vatRegime === "unknown" && "tratamento de IVA",
+    v.vatRegime === "unknown" && "tratamento de IVA (recomendado)",
     !v.firstRegistrationYear && "ano",
     v.mileageKm === null && "quilómetros",
     !v.fuel && "combustível",
