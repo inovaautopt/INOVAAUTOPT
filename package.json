@@ -1,0 +1,61 @@
+{
+  "name": "inova-auto",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Site e painel de gestão do stand Inova Auto",
+  "engines": {
+    "node": ">=22.12 <23"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:db": "vitest run --project db",
+    "test:e2e": "playwright test",
+    "db:local": "tsx scripts/db-local.ts",
+    "db:seed-demo": "tsx scripts/db-local.ts --seed-demo",
+    "test:all": "npm run lint && npm run typecheck && npm test && npm run build",
+    "admin:create": "tsx scripts/create-admin.ts",
+    "check:prod-data": "tsx scripts/check-no-demo-data.ts",
+    "outbox:run": "tsx scripts/run-outbox.ts"
+  },
+  "dependencies": {
+    "@fontsource-variable/archivo": "5.3.0",
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.117.3",
+    "clsx": "2.1.1",
+    "libphonenumber-js": "1.13.15",
+    "lucide-react": "1.53.0",
+    "next": "16.3.8",
+    "papaparse": "5.7.0",
+    "postgres": "3.4.9",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "sanitize-html": "2.18.0",
+    "server-only": "0.0.1",
+    "sharp": "0.35.5",
+    "tailwind-merge": "3.7.0",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "22.20.5",
+    "@types/papaparse": "5.5.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@types/sanitize-html": "2.16.2",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.3.8",
+    "tailwindcss": "4.3.3",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vite": "8.3.4",
+    "vitest": "5.0.1",
+    "wait-on": "9.5.1"
+  }
+}

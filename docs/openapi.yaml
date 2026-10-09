@@ -1,0 +1,169 @@
+openapi: 3.1.0
+info:
+  title: Inova Auto API
+  version: 1.0.0
+  description: |
+    API do site do stand. Respostas de erro têm sempre o formato
+    `{ "ok": false, "error": { "code": "...", "message": "...", "fields": { ... } } }`
+    e nunca incluem detalhes internos. Exemplos sem dados pessoais reais.
+servers:
+  - url: https://{dominio}
+    variables: { dominio: { default: inovaauto.pt } }
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        ok: { const: false }
+        error:
+          type: object
+          properties:
+            code: { enum: [validation_error, rate_limited, rejected, not_found, unauthorized, forbidden, conflict, unavailable, internal_error] }
+            message: { type: string }
+            fields: { type: object, additionalProperties: { type: string } }
+    Vehicle:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        reference: { type: string, example: IA-0001 }
+        url: { type: string, format: uri }
+        status: { enum: [available, reserved, sold] }
+        make: { type: string, example: Peugeot }
+        model: { type: string, example: "208" }
+        version: { type: [string, "null"] }
+        priceEur: { type: [number, "null"], example: 16990 }
+        firstRegistration: { type: [object, "null"], properties: { year: { type: integer }, month: { type: [integer, "null"] } } }
+        mileageKm: { type: [integer, "null"] }
+        fuel: { enum: [gasoline, diesel, hybrid, plugin_hybrid, electric, lpg, other, null] }
+        transmission: { enum: [manual, automatic, null] }
+        powerHp: { type: [integer, "null"] }
+        bodyType: { type: [string, "null"] }
+        image: { type: [string, "null"], format: uri }
+    ContactBase:
+      type: object
+      required: [name, idempotencyKey]
+      description: Pelo menos um de `phone` ou `email`.
+      properties:
+        name: { type: string, maxLength: 120 }
+        phone: { type: string, description: "Normalizado para E.164; sem indicativo assume Portugal" }
+        email: { type: string, format: email }
+        preferredChannel: { enum: [phone, email, whatsapp] }
+        allowWhatsapp: { type: boolean, default: false }
+        allowMarketing: { type: boolean, default: false }
+        idempotencyKey: { type: string, format: uuid, description: "Repetir o envio com a mesma chave não duplica o pedido" }
+        startedAt: { type: integer, description: "ms epoch em que o formulário foi apresentado (antiabuso)" }
+        website: { type: string, maxLength: 0, description: "Honeypot — tem de ir vazio" }
+        pageUrl: { type: string }
+    Accepted:
+      type: object
+      properties:
+        ok: { const: true }
+        reference: { type: string, example: CB334E18 }
+        duplicate: { type: boolean }
+paths:
+  /api/vehicles:
+    get:
+      summary: Stock publicado (paginado, 12 por página)
+      parameters:
+        - { name: q, in: query, schema: { type: string } }
+        - { name: marca, in: query, schema: { type: string } }
+        - { name: modelo, in: query, schema: { type: string } }
+        - { name: precoMin, in: query, schema: { type: integer } }
+        - { name: precoMax, in: query, schema: { type: integer } }
+        - { name: anoMin, in: query, schema: { type: integer } }
+        - { name: anoMax, in: query, schema: { type: integer } }
+        - { name: kmMax, in: query, schema: { type: integer } }
+        - { name: combustivel, in: query, schema: { type: string }, description: "lista separada por vírgulas" }
+        - { name: caixa, in: query, schema: { type: string } }
+        - { name: carrocaria, in: query, schema: { type: string } }
+        - { name: ordem, in: query, schema: { enum: [recent, price_asc, price_desc, km_asc, year_desc] } }
+        - { name: pagina, in: query, schema: { type: integer, minimum: 1 } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: object, properties: { ok: { const: true }, page: { type: integer }, pages: { type: integer }, total: { type: integer }, items: { type: array, items: { $ref: "#/components/schemas/Vehicle" } } } } } } }
+        "422": { description: Intervalo inválido, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /api/vehicles/{id}:
+    get:
+      summary: Uma viatura publicada (inclui vendidas, com estado)
+      parameters: [{ name: id, in: path, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        "200": { description: OK }
+        "404": { description: Não encontrada, content: { application/json: { schema: { $ref: "#/components/schemas/Error" } } } }
+  /api/leads:
+    post:
+      summary: Pedido de informação ou de financiamento
+      description: Requer cabeçalho Origin do próprio site. Limite 8 pedidos/hora por IP.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/ContactBase"
+                - type: object
+                  properties:
+                    kind: { enum: [info, financing], default: info }
+                    vehicleId: { type: string, format: uuid }
+                    message: { type: string, maxLength: 4000 }
+            example: { name: "Cliente Exemplo", phone: "912 345 678", kind: info, vehicleId: "00000000-0000-4000-8000-000000000000", idempotencyKey: "6f1b1c3e-2a6d-4f54-9a2e-6f1d2b3c4d5e" }
+      responses:
+        "201": { description: Recebido, content: { application/json: { schema: { $ref: "#/components/schemas/Accepted" } } } }
+        "200": { description: Repetição (mesma chave) }
+        "403": { description: Origem não autorizada }
+        "422": { description: Validação }
+        "429": { description: Limite de pedidos }
+  /api/appointments:
+    post:
+      summary: Pedido de visita/test drive (sujeito a confirmação; não é reserva)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/ContactBase"
+                - type: object
+                  required: [branchId, kind, requestedDate, requestedPeriod]
+                  properties:
+                    branchId: { type: string, format: uuid }
+                    vehicleId: { type: string, format: uuid }
+                    kind: { enum: [visit, test_drive] }
+                    requestedDate: { type: string, format: date }
+                    requestedPeriod: { enum: [morning, afternoon] }
+      responses:
+        "201": { description: Pedido registado (status requested) }
+        "422": { description: Fora de horário, dia de encerramento ou viatura vendida }
+  /api/trade-ins:
+    post:
+      summary: Pedido de avaliação de retoma (multipart)
+      description: Campo `data` (JSON com ContactBase + make, model, year, mileageKm, fuel, condition) e até 6 ficheiros `photos` (JPEG/PNG/WebP/HEIC, 10 MB). Sem preço automático.
+      responses:
+        "201": { description: Recebido }
+        "404": { description: Serviço de retomas desativado }
+  /api/saved-searches:
+    post:
+      summary: Alerta de novas viaturas por email (dupla confirmação)
+      responses: { "202": { description: Email de confirmação enfileirado } }
+  /api/health:
+    get:
+      summary: Estado da aplicação e da base de dados (sem segredos)
+      responses: { "200": { description: OK }, "503": { description: Base de dados indisponível } }
+  /api/webhooks/whatsapp:
+    get:
+      summary: Verificação da subscrição Meta (hub.mode, hub.verify_token → hub.challenge)
+      responses: { "200": { description: challenge }, "403": { description: Token inválido } }
+    post:
+      summary: Eventos da WhatsApp Cloud API
+      description: Exige X-Hub-Signature-256 válido (HMAC-SHA256 do corpo bruto). 200 = persistido, não "entregue".
+      responses: { "200": { description: Recebido }, "401": { description: Assinatura inválida } }
+  /api/admin/whatsapp/send:
+    post:
+      summary: Envio a partir da caixa de entrada (colaborador autenticado, mesma origem)
+      description: O destinatário é sempre o da conversa. Texto livre só na janela de 24 h; fora dela só templates aprovados configurados.
+      requestBody:
+        content:
+          application/json:
+            schema: { type: object, required: [conversationId, idempotencyKey], properties: { conversationId: { type: string, format: uuid }, text: { type: string }, templateKey: { type: string }, idempotencyKey: { type: string, format: uuid } } }
+      responses: { "202": { description: Enfileirado }, "403": { description: Sem sessão/permissão }, "503": { description: Integração por ativar } }
+  /api/cron/outbox:
+    post:
+      summary: Processamento agendado (outbox, webhooks, alertas, reservas expiradas)
+      description: "Authorization: Bearer CRON_SECRET. GET também aceite (Vercel Cron)."
+      responses: { "200": { description: Resumo do processamento }, "401": { description: Não autorizado } }
