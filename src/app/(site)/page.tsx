@@ -8,7 +8,6 @@ import { BODY_TYPE_LABEL, FUEL_LABEL, SERVICES, SERVICE_LABEL } from "@/lib/doma
 import { VehicleCard } from "@/components/vehicle/VehicleCard";
 import { QuickSearch } from "@/components/site/QuickSearch";
 import { VehicleImage } from "@/components/vehicle/VehicleImage";
-import { Plate } from "@/components/vehicle/Plate";
 import { formatPrice } from "@/lib/format";
 import { callCostNote, formatPhone } from "@/lib/phone";
 import { WhatsAppLink } from "@/components/vehicle/WhatsAppLink";
@@ -66,7 +65,6 @@ export default async function HomePage() {
                     {hero.make} {hero.model}
                   </p>
                   {hero.versionName && <p className="text-sm text-chrome">{hero.versionName}</p>}
-                  <Plate reference={hero.reference} year={hero.firstRegistrationYear} month={hero.firstRegistrationMonth} size="sm" className="mt-2" />
                 </div>
                 <p className="heading text-2xl num">{formatPrice(hero.priceCents)}</p>
               </div>
