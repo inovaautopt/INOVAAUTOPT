@@ -103,6 +103,12 @@ export function socialHandle(url: string): string {
   return m ? `@${m[1]}` : url;
 }
 
+/** "@conta" a partir do URL de um perfil (Instagram, Facebook). */
+export function socialHandle(url: string): string {
+  const m = url.match(/^https?:\/\/(?:www\.)?[^/]+\/([^/?#]+)/i);
+  return m ? `@${m[1]}` : url;
+}
+
 export function slugify(input: string): string {
   return input
     .normalize("NFD")
