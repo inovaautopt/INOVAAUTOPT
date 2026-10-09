@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowRight, MapPin, Phone } from "lucide-react";
+import { InstagramIcon } from "@/components/brand/InstagramIcon";
 import { getFeaturedVehicles, getMakeModelMap, getStockCounts } from "@/lib/vehicles";
 import { getPublicSettings } from "@/lib/settings";
 import { getBranches, directionsUrl, summarizeHours } from "@/lib/branches";
@@ -8,7 +9,7 @@ import { BODY_TYPE_LABEL, FUEL_LABEL, SERVICES, SERVICE_LABEL } from "@/lib/doma
 import { VehicleCard } from "@/components/vehicle/VehicleCard";
 import { QuickSearch } from "@/components/site/QuickSearch";
 import { VehicleImage } from "@/components/vehicle/VehicleImage";
-import { formatPrice } from "@/lib/format";
+import { formatPrice, socialHandle } from "@/lib/format";
 import { callCostNote, formatPhone } from "@/lib/phone";
 import { WhatsAppLink } from "@/components/vehicle/WhatsAppLink";
 import { JsonLd, dealerJsonLd } from "@/components/site/JsonLd";
@@ -134,6 +135,28 @@ export default async function HomePage() {
               </li>
             ))}
           </ul>
+        </section>
+      )}
+
+      {company.instagramUrl && (
+        <section className="mx-auto max-w-[90rem] px-4 pt-14 md:px-6" aria-labelledby="instagram">
+          <div className="flex flex-col items-start justify-between gap-5 rounded-[var(--radius-lg)] border border-line bg-surface p-6 md:flex-row md:items-center md:p-8">
+            <div className="flex items-start gap-4">
+              <span className="flex h-12 w-12 flex-none items-center justify-center rounded-full bg-brand-soft text-brand-ink">
+                <InstagramIcon className="h-6 w-6" />
+              </span>
+              <div>
+                <h2 id="instagram" className="heading text-xl md:text-2xl">
+                  Segue o stand no Instagram
+                </h2>
+                <p className="mt-1 text-ink-soft">As viaturas que chegam aparecem primeiro em {socialHandle(company.instagramUrl)}, com fotografias e vídeos.</p>
+              </div>
+            </div>
+            <a href={company.instagramUrl} target="_blank" rel="noopener noreferrer" className="btn btn-dark w-full sm:w-auto">
+              <InstagramIcon className="h-4 w-4" />
+              Seguir {socialHandle(company.instagramUrl)}
+            </a>
+          </div>
         </section>
       )}
 
