@@ -61,6 +61,10 @@ const nextConfig: NextConfig = {
   // dependemos da otimização de imagens da plataforma.
   images: { unoptimized: true },
   serverExternalPackages: ["sharp", "postgres"],
+  // Por omissão o Next.js recusa pedidos a server actions acima de 1 MB — uma fotografia de
+  // telemóvel passa disso. As fotos são reduzidas no navegador (PhotoUploader) e enviadas uma a
+  // uma; 4 MB fica abaixo do limite de 4,5 MB por pedido da Vercel.
+  experimental: { serverActions: { bodySizeLimit: "4mb" } },
   async headers() {
     const headers = [{ source: "/:path*", headers: securityHeaders }];
     // Pré-visualizações e staging nunca são indexadas
