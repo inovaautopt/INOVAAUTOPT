@@ -6,6 +6,7 @@ import { loadVehicle } from "@/server/admin-vehicles";
 import { PageHeader, VehicleStatusTag, Notice } from "@/components/admin/ui";
 import { VehicleForm } from "@/components/admin/VehicleForm";
 import { ActionForm } from "@/components/admin/ActionForm";
+import { PhotoUploader } from "@/components/admin/PhotoUploader";
 import { saveVehicleAction, duplicateVehicleAction, setStatusAction, reserveAction, closeReservationAction, uploadMediaAction, importMediaUrlsAction, mediaOpAction } from "../actions";
 import { mediaUrl } from "@/lib/storage-url";
 import { formatDateTime, formatPrice } from "@/lib/format";
@@ -206,11 +207,7 @@ export default async function EditVehicle(props: PageProps<"/admin/viaturas/[id]
         {canEdit && (
           <div className="mt-4 grid gap-4 md:grid-cols-2">
             <div className="panel p-4">
-              <ActionForm action={uploadMediaAction} submitLabel="Carregar fotografias" pendingLabel="A processar…" resetOnSuccess>
-                <input type="hidden" name="vehicleId" value={v.id} />
-                <label className="field-label" htmlFor="photos">Do computador ou telemóvel</label>
-                <input id="photos" name="photos" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" multiple className="block w-full text-sm file:mr-3 file:rounded file:border-0 file:bg-ink file:px-3 file:py-2 file:font-semibold file:text-white" />
-              </ActionForm>
+                <PhotoUploader vehicleId={v.id} action={uploadMediaAction} />
             </div>
             <div className="panel p-4">
               <ActionForm action={importMediaUrlsAction} submitLabel="Importar por URL" pendingLabel="A descarregar…" resetOnSuccess>
